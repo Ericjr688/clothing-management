@@ -1,0 +1,16 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+  <div class="container my-5" style="margin: 0px auto; max-width: 600px;">
+    <div class="card shadow border-1 rounded-4 p-4">
+      <div class="card-body text-center">
+        <p class="mb-4">You do not have permission to view this item.</p>
+        <button class="btn btn-primary" onclick="window.history.back()">
+          ← Go Back
+        </button>
+      </div>
+    </div>
+  </div>
+{% endblock %}

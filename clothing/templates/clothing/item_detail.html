@@ -1,0 +1,228 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block bootstrap5_content %}
+
+<div class="container" style="margin: 20px auto; max-width: 1100px; padding: 20px 140px;">
+    <!-- Main Row: Two columns: left for image+buttons, right for details -->
+       <!-- Back button -->
+    <div class="row mb-3">
+        <div class="col">
+        <a href="javascript:history.back()"
+            class="btn btn-outline-dark float-start">
+            ← Back
+        </a>
+        </div>
+    </div>
+    <div class="row">
+        <!-- LEFT COLUMN: Image & Buttons -->
+        <div class="col-md-3 text-center mb-4">
+            {% if item.image %}
+                <img src="{{ item.image.url }}"
+                    alt="{{ item.name }}"
+                    class="img-fluid shadow-sm"
+                    style="max-height: 350px; object-fit: cover; border: 1px solid #ddd;">
+            {% else %}
+                <div class="bg-light p-4 text-muted" style="border: 1px solid #ccc;">
+                    No Image Available
+                </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <div class="mt-3 d-grid gap-2">
+                    <!-- Borrow Button (stacked on top) -->
+                    {% if user.userprofile.role == 'patron' or user.userprofile.role == 'librarian' %}
+                        {% if item.availability != 'checked_in' %}
+                            <button class="btn btn-secondary btn-sm w-100" disabled title="Currently not available.">
+                                Currently not available
+                            </button>
+                        {% elif pending_borrow %}
+                            <button class="btn btn-secondary btn-sm w-100" disabled title="Request pending.">
+                                Request Pending
+                            </button>
+                        {% else %}
+                            <a href="{% url 'borrowing:create_borrow_request' item.id %}" class="btn btn-primary btn-sm w-100">
+                                Borrow Item
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <!-- Favorite Button (stacked below) -->
+                    <form method="post" action="{% url 'clothing:toggle_favorite' item.id %}">
+                        {% csrf_token %}
+                        {% if item in user.userprofile.favorites.all %}
+                            <button type="submit" class="btn btn-warning btn-sm w-100">
+                                ★ Unfavorite
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                                ☆ Favorite?
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+            {% else %}
+                <!-- anonymous: prompt to log in for actions -->
+                <div class="alert alert-info mt-3">
+                  <small>
+                    <a href="{% url 'login' %}">Log in to borrow or favorite.</a>
+                  </small>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT COLUMN: Basic Info and Collections -->
+        <div class="col-md-9">
+            <!-- Title, Owner, Ratings etc. -->
+            <h1 class="fw-bold" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; color: #023e8a; font-size: 2rem;">
+                {{ item.name }}
+            </h1>
+            <p style="font-size: 1.1rem;">by <strong>{{ item.owner.user.first_name|default:'UNKNOWN USER' }}</strong></p>
+
+            <div class="d-flex align-items-center mb-3" style="gap: 12px;">
+                <span class="fw-bold" style="font-size: 1.3rem; color: #023e8a;">
+                    {% if average_rating %}
+                        {{ average_rating|floatformat:2 }}★
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+                <span class="text-muted" style="font-size: 0.95rem;">
+                    <span class="text-secondary">·</span> {{ reviews|length }} reviews
+                </span>
+            </div>
+
+            <p>
+              <strong>Status:</strong>
+              <span class="badge-status {{ item.availability }}">
+                {{ item.get_availability_display }}
+              </span>
+            </p>
+            <p><strong>Location:</strong> {{ item.location }}</p>
+            {% if user_has_borrowed %}
+                <p><strong>Due Date:</strong> {{ due_date }}</p>
+            {% else %}
+                <p><strong>Available From:</strong> {{ available_from|default:"Now" }}</p>
+            {% endif %}
+
+            <!-- Collections -->
+
+          {% with item.item_collections.all as item_collections %}
+          {% if item_collections|length %}
+          <p>
+              <strong>Collections:</strong>
+
+              {% for collection in item_collections %}
+                  <a href="{% url 'clothing_collections:collection_detail' collection.id %}" class="badge bg-secondary text-white text-decoration-none me-1">
+                  {{ collection.title }}
+                  </a>
+              {% endfor %}
+          </p>
+          {% else %}
+            <p><strong>Collections:</strong> None</p>
+          {% endif %}
+      {% endwith %}
+
+        <!-- Tags -->
+        {% with item.tags.all as item_tags %}
+            {% if item_tags|length %}
+            <p>
+                <strong>Tags:</strong>
+                {% for tag in item_tags %}
+                {% if tag.category %}
+                    <a href="{% url 'clothing:search' %}?keyword={{ tag.category }}" class="badge bg-primary text-white text-decoration-none me-1">
+                    {{ tag.category }}
+                    </a>
+                {% endif %}
+                {% if tag.size %}
+                    <a href="{% url 'clothing:search' %}?keyword={{ tag.size }}" class="badge bg-primary text-white text-decoration-none me-1">
+                    {{ tag.size }}
+                    </a>
+                {% endif %}
+                {% if tag.color %}
+                    <a href="{% url 'clothing:search' %}?keyword={{ tag.color }}" class="badge bg-primary text-white text-decoration-none me-1">
+                    {{ tag.color }}
+                    </a>
+                {% endif %}
+                {% endfor %}
+            </p>
+            {% else %}
+            <p><strong>Tags:</strong> None</p>
+            {% endif %}
+        {% endwith %}
+      
+          {% if user.is_authenticated and user.userprofile.role == 'librarian' %}
+                <div class="mt-4 d-flex gap-2">
+                    <a href="{% url 'clothing:edit_item' item.id %}" class="btn btn-outline-success">
+                        ✏️ Edit Item
+                    </a>
+
+                    <form method="post" action="{% url 'clothing:remove_item' item.id %}" onsubmit="return confirm('Are you sure you want to permanently delete this item?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            🗑️ Remove Item
+                        </button>
+                    </form>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'clothing:view_images' item.id %}" class="btn btn-outline-primary">
+                        📸 View Images
+                    </a>
+                </div>
+          {% endif %}
+        </div>
+    </div>
+
+    <!-- Detailed Description / Overview -->
+    <div class="mt-4 mb-5 p-4 bg-light" style="border: 1px solid #ddd;">
+        <h3 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #023e8a; font-size: 1.4rem;">
+          About This Item
+        </h3>
+        <p class="mb-0" style="font-size: 1rem; overflow-y: auto; max-height: 200px; line-height: 1.6;">
+            {{ item.description|default:"No description provided." }}
+        </p>
+    </div>
+
+    <!-- Ratings & Reviews Section -->
+    <div class="mb-5">
+        <h3 class="mb-3" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #023e8a; font-size: 1.4rem;">
+            Ratings & Reviews
+        </h3>
+
+        {% if user.is_authenticated %}
+            <div class="mb-4">
+                <p class="fw-bold">Leave a Review:</p>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-outline-primary">Submit Review</button>
+                </form>
+            </div>
+        {% else %}
+            <p><a href="{% url 'login' %}">Log in</a> to leave a review.</p>
+        {% endif %}
+
+        {% if reviews %}
+        {% for review in reviews %}
+            <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="mb-2">{{ review.user.first_name }}'s Rating: <span>{{ review.rating }} </span>/ 5</p>
+                <blockquote class="blockquote mb-3">
+                    <p class="mb-0">{{ review.comment }}</p>
+                </blockquote>
+                <div class="text-muted small">
+                    {{ review.created_at|date:"F j, Y" }}
+                </div>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+        {% else %}
+            <p>No reviews yet. Be the first to review this item!</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

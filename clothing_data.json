@@ -1,0 +1,75 @@
+[
+{
+  "model": "clothing.tag",
+  "pk": 4,
+  "fields": {
+    "category": "Tshirt",
+    "size": "med",
+    "color": "Blue"
+  }
+},
+{
+  "model": "clothing.tag",
+  "pk": 5,
+  "fields": {
+    "category": "Activewear",
+    "size": "med",
+    "color": "Blue"
+  }
+},
+{
+  "model": "clothing.tag",
+  "pk": 6,
+  "fields": {
+    "category": "Jeans",
+    "size": "small",
+    "color": "Red"
+  }
+},
+{
+  "model": "clothing.clothingitem",
+  "pk": 1,
+  "fields": {
+    "name": "Red Hoodie",
+    "description": "A comfortable red hoodie for winter",
+    "availability": "checked_in",
+    "availability_date": "2025-02-21",
+    "owner": 1,
+    "due_date": "2025-02-27",
+    "tags": [
+      5
+    ],
+    "likes": []
+  }
+},
+{
+  "model": "clothing.clothingitem",
+  "pk": 2,
+  "fields": {
+    "name": "Blue Shirt",
+    "description": "Perfect for any occasion",
+    "availability": "in_repair",
+    "availability_date": "2025-02-24",
+    "owner": null,
+    "due_date": null,
+    "tags": [],
+    "likes": []
+  }
+},
+{
+  "model": "clothing.clothingitem",
+  "pk": 3,
+  "fields": {
+    "name": "Comfy jacket",
+    "description": "Comfy",
+    "availability": "checked_in",
+    "availability_date": "2025-02-25",
+    "owner": 1,
+    "due_date": "2025-02-27",
+    "tags": [
+      5
+    ],
+    "likes": []
+  }
+}
+]

@@ -1,0 +1,43 @@
+{% load static %}
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="ShjLHSgFuRc-N6RYetXTWAZ5bROs-Z9I-Cb7LtfXeu8" />
+    <title>{% block title %}Closet App{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% bootstrap_css %}
+
+    {% block extra_head %}{% endblock %}
+
+    <style>
+        .badge-status {
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+            display: inline-block;
+        }
+        .badge-status.checked_in { background-color: #28a745; }
+        .badge-status.checked_out { background-color: #dc3545; }
+        .badge-status.in_repair { background-color: #ffc107; color: #212529; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  {% include 'clothing/base_header.html' %}
+
+  <main class="flex-fill">
+    {% block bootstrap5_content %}{% endblock %}
+  </main>
+
+  {% include 'footer.html' %}
+
+  {% bootstrap_javascript %}
+</body>
+</html>

@@ -1,0 +1,118 @@
+{% load static %}
+<!-- BASE HEADER: Copy of homepage header without the search bar -->
+<div id="header">
+    <h1 id="logo" style="margin-left: 10px;">
+        <a href="{% url 'homepage' %}">B29<br>Clothes</a>
+    </h1>
+    <div class="navbar">
+        <a class="nav-item" href="{% url 'clothing:profile' %}">
+            <img class="nav-item" id="profile" src="{% static 'users/icons/user.png' %}" alt="Profile">
+        </a>
+        <a class="nav-item" href="{% url 'homepage' %}">
+            <img class="nav-item" id="home" src="{% static 'users/icons/home.png' %}" alt="Home">
+        </a>
+        <a class="nav-item" href="{% url 'clothing:browse' %}">
+            <img class="nav-item" id="browse" src="{% static 'users/icons/search.png' %}?v=3" alt="Browse">
+        </a>
+    </div>
+</div>
+
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        background-color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #header {
+        margin: 0;
+        width: 100%;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0px 0px 0px;
+        height: 17%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    #logo {             
+        text-align: center !important;
+        font-family: Verdana, sans-serif !important;
+        font-size: 2rem !important;
+        line-height: 1.1 !important;
+        text-shadow: 0 1px 2px rgba(55, 226, 97, 0.1) !important;
+        padding: 8px 8px !important;
+        font-variant: small-caps !important;
+        font-weight: bold !important;
+        color: black;
+    }
+
+    .navbar {
+        height: 42px;
+        width: 15%;
+        gap: 22px;
+        margin-right: 23px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .nav-item img {
+        height: 90%;
+        object-fit: contain;
+    }
+
+    a {
+        color: inherit; 
+        text-decoration: none; 
+    }
+
+    @font-face {
+        font-family: "waltograph";
+        src: url("{% static 'users/fonts/waltographUI.ttf' %}");
+    }
+
+    @font-face {
+        font-family: "teamspirit";
+        src: url("{% static 'users/fonts/TeamSpiritNF.ttf' %}");
+    }
+
+    #site-footer {
+        background-color: #023e8a;
+        color: #f8f9fa;
+        text-align: center;
+        padding: 15px 0;
+        margin-top: 15px;
+        font-size: 0.9rem;
+    }
+
+    #site-footer a {
+        color: #f8f9fa;
+        margin: 0 10px;
+        text-decoration: underline;
+    }
+
+    #site-footer a:hover {
+        text-decoration: none;
+    }
+    
+    .btn.btn-primary {
+        border: none;
+        background-color: #023e8a;
+    }
+
+    .container.mt-5 {
+        margin: 0px auto 50px auto;
+    }
+
+</style>

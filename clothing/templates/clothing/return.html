@@ -1,0 +1,66 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  .wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .content {
+    flex: 1;
+  }
+</style>
+
+<div class="wrapper">
+  <div class="content">
+    <div class="container" style="max-width: 900px; margin: 30px auto 0; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);">
+      <h2 style="margin-bottom: 20px; color: #023e8a">View Borrowed Items</h2>
+            <!-- Back button -->
+            <div class="row mb-3">
+              <div class="col">
+                <a href="javascript:history.back()" 
+                    class="btn btn-outline-dark float-start">
+                    ← Back
+                </a>
+              </div>
+            </div>
+      {% if user.first_name %}
+          <p><strong>{{ user.first_name }}'s items:</strong></p>
+      {% else %}
+          <p>User not logged in</p>
+      {% endif %}
+
+      {% if checked_out_items %}
+          <form method="POST">
+              {% csrf_token %}
+              <ul class="list-group">
+                  {% for item in checked_out_items %}
+                      <li class="list-group-item">
+                          <label>
+                              <input type="checkbox" name="items_to_return" value="{{ item.id }}">
+                              <strong>{{ item.name }}</strong> - {{ item.description }}
+                              {% if item.due_date %}
+                                  <span class="text-danger">(Due: {{ item.due_date }})</span>
+                              {% endif %}
+                          </label>
+                      </li>
+                  {% endfor %}
+              </ul>
+              <button type="submit" class="btn btn-primary mt-3">Return Selected Items</button>
+          </form>
+      {% else %}
+          <p>No items checked out.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+</div>
+{% endblock %}

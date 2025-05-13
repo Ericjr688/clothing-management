@@ -1,0 +1,17 @@
+{% extends 'clothing/index.html' %}
+
+{% load django_bootstrap5 %}  
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2>View Borrowed Items (patron/return)</h2>
+    {% if user.first_name %}
+    <h>{{ user.first_name }}'s items</h>
+    {% else %}
+    <p>User not logged in</p>
+    {% endif %}
+    
+</div>
+
+{% endblock %}

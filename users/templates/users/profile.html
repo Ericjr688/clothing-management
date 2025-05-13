@@ -1,0 +1,143 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block bootstrap5_content %}
+  {% if not user.is_authenticated %}
+    {% include 'users/test_dashboard.html' %}
+  {% else %}
+    <div class="container mt-5" style="max-width: 550px;">
+      <div class="row justify-content-center gx-2 gy-2">
+        <div class="col-12">
+          <div class="card shadow h-100 border-1 rounded-4 p-3">
+            <div class="card-body text-center">
+
+              <!-- PROFILE -->
+              <h2 class="fw-bold mb-2"
+                  style="font-family: 'Segoe UI', sans-serif; color: #023e8a; font-size: 1.75rem;">
+                Hello, {{ user.first_name }}!
+              </h2>
+              <img src="{{ user.userprofile.profile_picture.url }}"
+                   alt="Profile Picture"
+                   class="rounded-circle mb-2"
+                   style="width:124px; height:125px; object-fit:cover; border:2px solid #023e8a;">
+              {% if user.is_authenticated %}
+                <div class="mt-1 mb-2 text-center">
+                  <a href="{% url 'edit_profile_picture' %}"
+                    class="btn btn-outline-secondary"
+                    style="font-size: 0.9rem; padding: 5px 15px;">
+                    Change Photo
+                  </a>
+                </div>
+              {% endif %}
+              <p class="mb-0" style="font-size:0.95rem;">
+                <strong>Role:</strong> {{ user.userprofile.role|capfirst }}<br>
+                <strong>Email:</strong> {{ user.email }}<br>
+                <strong>Joined:</strong> {{ user.date_joined|date:"M j, Y" }}
+                <div class="upgrade-container">
+                    {% if user.is_authenticated %}
+                        {% if user.userprofile.role == "patron" %}
+                            {% if user.userprofile.has_pending_upgrade_request %}
+                                <p><strong>Promotion Status: </strong>Your promotion request is pending</p>
+                            {% else %}
+                                <form action="{% url 'request_librarian_upgrade' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Request to Become a Librarian</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                  </div>
+              </p>
+
+              <hr class="my-2">
+
+              <!-- ACTIONS -->
+              <h2 class="fw-bold mb-2"
+                  style="font-family: 'Segoe UI', sans-serif; color: #023e8a; font-size: 1.5rem; margin-top: 20px;">
+                Your Actions
+              </h2>
+              {% if user.userprofile.role == 'librarian' %}
+                <p class="text-secondary mb-2" style="font-size:0.9rem;">
+                  Manage your library and check item status.
+                </p>
+                <div class="d-grid gap-2">
+                  <a href="{% url 'clothing:item_create' %}" class="dashboard-btn librarian-btn">Create Items</a>
+                  <a href="{% url 'clothing:browse' %}" class="dashboard-btn librarian-btn">Browse Items</a>
+                  <a href="{% url 'clothing:return_item' %}" class="dashboard-btn librarian-btn">Return Items</a>
+                  <a href="{% url 'clothing:borrowed' %}" class="dashboard-btn librarian-btn">Borrowed Items</a>
+                  <a href="{% url 'borrowing:borrow_request_list' %}" class="dashboard-btn librarian-btn">Borrow Requests</a>
+                  <a href="{% url 'librarian_upgrade_requests' %}" class="dashboard-btn librarian-btn">Manage Patrons</a>
+                  <a href="{% url 'clothing_collections:collection_list' %}" class="dashboard-btn librarian-btn">View Collections</a>
+                  <a href="{% url 'clothing:favorite' %}" class="dashboard-btn librarian-btn">View Favorites</a>
+                </div>
+              {% else %}
+                <p class="text-secondary mb-2" style="font-size:0.9rem;">
+                  Browse items and manage your borrowed items.
+                </p>
+                <div class="d-grid gap-2">
+                  <a href="{% url 'clothing:browse' %}" class="dashboard-btn librarian-btn">Browse Items</a>
+                  <a href="{% url 'clothing:return_item' %}" class="dashboard-btn librarian-btn">Return Items</a>
+                  <a href="{% url 'clothing:borrowed' %}" class="dashboard-btn librarian-btn">Borrowed Items</a>
+                  <a href="{% url 'clothing_collections:collection_list' %}" class="dashboard-btn librarian-btn">View Collections</a>
+                  <a href="{% url 'clothing:favorite' %}" class="dashboard-btn librarian-btn">View Favorites</a>
+                </div>
+              {% endif %}
+
+              <hr class="my-2">
+
+              <!-- SIGN OUT -->
+              <div class="d-grid">
+                <a href="{% url 'sign_out' %}" class="dashboard-btn signout-btn">Sign Out</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* keep footer at bottom */
+      #site-footer { margin-top: auto; }
+
+      .dashboard-btn {
+        display: block;
+        width: 100%;
+        padding: 8px 0;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color .2s, box-shadow .2s;
+      }
+      .librarian-btn {
+        background: #023e8a; color: #fff; box-shadow: 0 0 2px rgba(0,0,0,.2);
+      }
+      .librarian-btn:hover {
+        background: #012a57; box-shadow: 0 1px 6px rgba(0,0,0,.15);
+      }
+      .signout-btn {
+        background: #dc3545; color: #fff; box-shadow: 0 0 2px rgba(0,0,0,.2);
+      }
+      .signout-btn:hover {
+        background: #c82333; box-shadow: 0 1px 6px rgba(0,0,0,.15);
+      }
+      .upgrade-container {
+          margin: 0px;
+          padding: 0px;
+          font-size:0.95rem;
+          text-align: center;
+      }
+      .upgrade-container button {
+          margin: 8px 0px 0px 0px;
+          padding: 6px 13px;
+          font-size:0.85rem;
+          border: none;
+          background-color: #023e8a;
+          color: #f8f9fa;
+          cursor: pointer;
+      }
+    </style>
+  {% endif %}
+{% endblock %}

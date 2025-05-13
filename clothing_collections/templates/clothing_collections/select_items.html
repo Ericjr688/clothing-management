@@ -1,0 +1,38 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+    <div class="container mt-5">
+        <h2>Add Items to Collection: "{{ collection.title }}"</h2>
+        <!-- Search Form -->
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search items..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-outline-secondary">Search</button>
+            </div>
+        </form>
+        <!-- Items List with Checkboxes -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="card" style="max-height: 400px; overflow-y: auto;">
+                <ul class="list-group list-group-flush">
+                    {% for item in items %}
+                        <li class="list-group-item">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selected_items" value="{{ item.id }}" id="item{{ item.id }}">
+                                <label class="form-check-label" for="item{{ item.id }}">
+                                    {{ item.name }} - {{ item.description|truncatewords:10 }}
+                                </label>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No items found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Selected Items</button>
+            <a href="{% url 'clothing_collections:collection_detail' collection.id %}" class="btn btn-secondary mt-3">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

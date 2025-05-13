@@ -1,0 +1,120 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+<div class="container mt-5">
+
+    <!-- Back button -->
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-dark">
+            ← Back
+        </a>
+    </div>
+
+    <!-- Collection Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold">{{ collection.title }}</h2>
+        <p class="text-muted">{{ collection.description }}</p>
+        <p><strong>Created by:</strong> {{ collection.owner.user.username }}</p>
+        <p><strong>Collection Type:</strong> {{ collection.visibility|capfirst }}</p>
+    </div>
+
+    <hr class="border border-dark">
+
+    <!-- Add Items + Search Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3>Items in this Collection</h3>
+        {% if user.is_authenticated and collection.can_modify %}
+            <a href="{% url 'clothing_collections:select_items_for_collection' collection.id %}" class="btn btn-primary">
+                ➕ Add Items
+            </a>
+        {% endif %}
+    </div>
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search items in this collection..." value="{{ search_query }}">
+            <button type="submit" class="btn btn-outline-secondary">🔍 Search</button>
+        </div>
+    </form>
+
+    <!-- Items List -->
+    {% if items %}
+        <ul class="list-group mb-4">
+            {% for item in items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{% url 'clothing:item_detail' item.id %}" class="text-decoration-none">{{ item.name }}</a>
+                    {% if user.is_authenticated and collection.can_modify %}
+                        <form method="post" action="{% url 'clothing_collections:remove_item_from_collection' collection.id item.id %}" class="ms-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-warning">🗑 Remove</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No items found.</p>
+    {% endif %}
+
+    <!-- Edit/Delete Buttons -->
+    {% if user.is_authenticated and collection.can_modify %}
+        <div class="mb-4 d-flex flex-wrap gap-2">
+            <a href="{% url 'clothing_collections:edit_collection' collection.id %}" class="btn btn-secondary">
+                ✏️ Edit Collection
+            </a>
+            <form id="deleteForm"
+                method="post"
+                action="{% url 'clothing_collections:delete_collection' collection.id %}"
+                onsubmit="return confirm('Are you sure you want to pemanently delete “{{ collection.title }}”? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    ❌ Delete Collection
+                </button>
+            </form>
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <!-- Access Requests (Librarian Only) -->
+    {% if user.is_authenticated and user.userprofile.role == 'librarian' and access_requests %}
+        <h3>Access Requests</h3>
+        <table class="table table-bordered mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Requester</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in access_requests %}
+                    <tr>
+                        <td>{{ req.requester.user.username }}</td>
+                        <td>{{ req.status|capfirst }}</td>
+                        <td>
+                            {% if req.status == 'pending' %}
+                                <form method="post" action="{% url 'clothing_collections:approve_collection_request' collection.id req.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">✅ Approve</button>
+                                </form>
+                                <form method="post" action="{% url 'clothing_collections:deny_collection_request' collection.id req.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">❌ Deny</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{% url 'clothing_collections:collection_list' %}" class="btn btn-secondary mt-4">
+        ← Back to All Collections
+    </a>
+</div>
+
+{% endblock %}

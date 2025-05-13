@@ -1,0 +1,40 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 static %}
+{% block bootstrap5_content %}
+  <div class="container mt-5">
+    <h2>Images for “{{ item.name }}”</h2>
+    <!-- Back button -->
+    <div class="row mb-3">
+      <div class="col">
+        <a href="{% url 'clothing:item_detail' item.id %}" class="btn btn-outline-dark float-start">
+          ← Back
+        </a>
+      </div>
+    </div>
+    <div class="row gx-3 gy-3" style="min-height: 42vh;">
+      {% for img in images %}
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <img src="{{ img.image.url }}" class="card-img-top" alt="">
+            <div class="card-body text-center">
+              <form method="post" action="{% url 'clothing:delete_item_image' item.id img.id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No images uploaded yet.</p>
+      {% endfor %}
+    </div>
+    <div class="d-flex justify-content-between mt-4">
+      <a href="{% url 'clothing:add_item_image' item.id %}" class="btn btn-primary">
+        Add New Image
+      </a>
+      <a href="{% url 'clothing:item_detail' item.id %}" class="btn btn-secondary">
+        Back to Item
+      </a>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .content {
+    flex: 1;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+
+  .card-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #023e8a;
+    font-size: 2rem;
+  }
+
+  .dashboard-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  table th, table td {
+    vertical-align: middle !important;
+  }
+
+  .btn-action {
+    border-radius: 50px;
+    padding: 5px 15px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .btn-action.approve {
+    background-color: #00c33b;
+    border: none;
+    color: white;
+  }
+
+  .btn-action.approve:hover {
+    background-color: #008528;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .btn-action.deny {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+  }
+
+  .btn-action.deny:hover {
+    background-color: #c62828;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+  }
+</style>
+
+<div class="wrapper">
+  <div class="content">
+    <div class="container mt-5" style="max-width: 1000px;">
+      <div class="card border-0 rounded-4">
+        <div class="card-body">
+          <h2 class="card-title mb-4">Pending Upgrade Requests</h2>
+          <!-- Back button -->
+          <div class="row mb-3">
+            <div class="col">
+              <a href="{% url 'clothing:profile' %}"
+                  class="btn btn-outline-dark float-start">
+                  ← Back
+              </a>
+            </div>
+          </div>
+          {% if pending_requests %}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Requester</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Requested At</th>
+                    <th scope="col" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for req in pending_requests %}
+                    <tr>
+                      <td>{{ req.requester.user.username }}</td>
+                      <td>{{ req.status|capfirst }}</td>
+                      <td>{{ req.created_at|date:"M j, Y, g:i a" }}</td>
+                      <td class="text-center">
+                        <form action="{% url 'approve_librarian_request' req.id %}" method="post" class="d-inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-action approve">Approve</button>
+                        </form>
+                        <form action="{% url 'deny_librarian_request' req.id %}" method="post" class="d-inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-action deny">Deny</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert alert-info" role="alert">
+              No pending requests.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

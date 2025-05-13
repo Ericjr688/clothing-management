@@ -1,0 +1,72 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+
+  <div class="container my-5" style="margin: 0px auto; max-width: 600px;">
+    <div class="card shadow border-1 rounded-4 p-4">
+      <div class="card-body text-center">
+        <h2 class="fw-bold mb-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, sans-serif; color: #023e8a; font-size: 2rem;">
+          Welcome, Librarian {{ user.first_name }}!
+        </h2>
+        <p class="text-secondary mb-4" style="font-size: 1.1rem;">
+          Manage your library and check the status of items.
+        </p>
+
+        <div class="d-flex flex-column align-items-center gap-3">
+          <a href="{% url 'clothing:item_create' %}" class="dashboard-btn librarian-btn">Create Items</a>
+          <a href="{% url 'clothing:browse' %}" class="dashboard-btn librarian-btn">Browse All Items</a>
+          <a href="{% url 'clothing:return_item' %}" class="dashboard-btn librarian-btn">Return Items</a>
+          <a href="{% url 'librarian_upgrade_requests' %}" class="dashboard-btn librarian-btn">Manage Patrons</a>
+          <a href="{% url 'clothing_collections:collection_list' %}" class="dashboard-btn librarian-btn">View Collections</a>
+          <a href="{% url 'clothing_collections:create_collection' %}" class="dashboard-btn librarian-btn">Create Collection</a>
+          <a href="{% url 'borrowing:borrow_request_list' %}" class="dashboard-btn librarian-btn">Borrow Requests</a>
+          <a href="{% url 'clothing:favorite' %}" class="dashboard-btn librarian-btn">View Favorites</a>
+          <a href="{% url 'clothing:borrowed' %}" class="dashboard-btn librarian-btn">View Borrowed Items</a>
+          <hr style="width: 100%; border: 0; border-top: 1px solid #ccc;">
+          <a href="{% url 'sign_out' %}" class="dashboard-btn signout-btn">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <style>
+
+    .dashboard-btn {
+      display: block;
+      width: 80%;
+      text-align: center;
+      padding: 12px 0;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .librarian-btn {
+      background-color: #023e8a;
+      color: #ffffff;
+      border: none;
+      box-shadow: 0px 0px 3px black;
+    }
+    .librarian-btn:hover {
+      background-color: #012a57;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .signout-btn {
+      box-shadow: 0px 0px 3px black;
+      background-color: #dc3545;
+      color: #ffffff;
+      border: none;
+    }
+    .signout-btn:hover {
+      box-shadow: 0px 0px 3px black;
+      background-color: #c82333;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+    }
+  </style>
+{% endblock %}

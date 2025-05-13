@@ -1,0 +1,46 @@
+    {% extends 'clothing/bootstrap.html' %}
+
+    {% load django_bootstrap5 %}
+    {% load static %}
+
+    {% block bootstrap5_content %}
+    <div class="container mt-5">
+        <h2>Edit Clothing Item</h2>
+        <!-- Back button -->
+        <div class="row mb-3">
+            <div class="col">
+            <a href="{% url 'clothing:item_detail' item.id %}" class="btn btn-outline-dark float-start">
+                ← Back
+            </a>
+            </div>
+        </div>
+        {% if user.is_authenticated and user.userprofile.role == 'librarian' %}
+            {{item.get_availability_display}}
+            {% if item.availability != 'checked_out' %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        
+                        <!-- Delete Form -->
+                        <form method="post" action="{% url 'clothing:remove_item' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to permanently delete this item?');">
+                                🗑️ Remove Item
+                            </button>
+                        </form>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-warning mt-4" role="alert">
+                    This item is currently checked out and cannot be edited or removed.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-danger mt-4" role="alert">
+                You do not have permission to edit this item.
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}

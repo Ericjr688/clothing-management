@@ -1,0 +1,14 @@
+{% extends 'clothing/bootstrap.html' %}
+
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+    <div class="container-md mx-auto">
+
+        {% block content %}
+        <a href="{% url 'clothing' %}">Search Items</a>
+            {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% block bootstrap5_content %}
+  <div class="container mt-5 text-center">
+    <h4>Delete this image?</h4>
+    <img src="{{ image.image.url }}" class="img-thumbnail mb-3" style="max-width: 300px;">
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a href="{% url 'clothing:view_images' item.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% block bootstrap5_content %}
+  <div class="container mt-5" style="min-height: 55vh;">
+    <h2 style="margin-bottom: 20px">Add Image for “{{ item.name }}”</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% bootstrap_form form layout='vertical' %}
+      <button type="submit" class="btn btn-success mt-3">Upload</button>
+      <a href="{% url 'clothing:view_images' item.id %}" class="btn btn-link mt-3">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

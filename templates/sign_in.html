@@ -1,0 +1,111 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login Page</title>
+    {% bootstrap_css %}
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .content {
+        flex: 1;
+      }
+
+      .navbar {
+          height: 42px;
+          width: 15%;
+          gap: 22px;
+          margin-right: 23px;
+          overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+
+      .nav-item {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          object-fit: contain;
+      }
+
+      .nav-item img {
+          height: 90%;
+          object-fit: contain;
+      }
+
+      a {
+          color: inherit; 
+          text-decoration: none; 
+      }
+      #site-footer {
+          margin-top: auto;
+      }
+
+    </style>
+    
+  </head>
+  <body>
+    <div class ="wrapper">
+      <div class="content">
+    <h1 class="d-flex justify-content-center p-4" style="margin-top: 20px">Welcome to our Clothing App!</h1>
+    <div class="container d-flex justify-content-center align-items-center mt-3 flex-column gap-3" style="margin: 0px auto">
+      <div class="card shadow-sm p-4" style="max-width: 300px; width: 100%;">
+        {% if request.session.user_data %}
+          <div class="text-center">
+            <p class="mb-3">Hi {{ request.session.user_data.given_name }}!</p>
+            <a href="{% url 'clothing:search' %}" class="btn btn-primary mb-2">Search Clothing</a>
+            <p>Click here to <a href="{% url 'sign_out' %}">Sign Out</a></p>
+          </div>
+        {% else %}
+          <div class="text-center">
+            <p class="mb-3">Click below to sign in with Google</p>
+            <div id="g_id_onload"
+                 data-client_id="{{ GOOGLE_OAUTH_CLIENT_ID }}"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-login_uri="{{ login_uri }}"
+                 data-itp_support="true">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left"
+                 style="display: inline-block !important; width: 100% !important">
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-3">
+          <a href="{% url 'homepage' %}" class="btn btn-primary">Continue Without Signing In</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% bootstrap_javascript %}
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}

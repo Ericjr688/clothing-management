@@ -1,0 +1,15 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+<div class="container mt-5">
+    <h2 style="margin-bottom: 24px; color: #023e8a">Create New Clothing Item</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary">Create Item</button>
+        <a href="{% url 'clothing:profile' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'clothing/bootstrap.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Collections</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto 40px;
+            padding: 20px 120px;
+            border-radius: 12px;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            background-color: #fff;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .card-subtitle {
+            font-size: 0.95rem;
+        }
+
+        .collection-gallery {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .collection-gallery img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        #site-footer {
+            background-color: #023e8a;
+            color: #f8f9fa;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        #site-footer a {
+            color: #f8f9fa;
+            margin: 0 10px;
+            text-decoration: underline;
+        }
+
+        #site-footer a:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="mb-2" style="color: #023e8a;">Collections</h2>
+        <div class="d-flex mb-4">
+          <!-- Back button -->
+          <a href="javascript:history.back()"
+             class="btn btn-outline-dark me-2">
+            ← Back
+          </a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'clothing_collections:create_collection' %}"
+               class="btn btn-outline-success">
+              Add New Collection
+            </a>
+          {% endif %}
+        </div>
+
+        <form method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search collections..." value="{{ search_query }}">
+                <button type="submit" class="btn btn-outline-primary">Search</button>
+            </div>
+        </form>
+
+        <div class="row g-5">
+            {% for collection in collections %}
+                <div class="col-md-6">
+                    <div class="card px-4 py-3">
+                        <div class="card-body">
+                            <h3 class="card-title mt-0 mb-3">{{ collection.title }}</h3>
+                            <h4 class="card-subtitle mb-3 text-muted">Created by: {{ collection.owner.user.username }}</h4>
+                            <h4 class="card-subtitle mb-3">{{ collection.visibility|capfirst }} Collection</h4>
+                            <p class="card-text"><strong>Description:</strong><br>{{ collection.description|truncatewords:20 }}</p>
+                            {% if collection.visibility == 'private' and not collection.can_access %}
+                                {% if collection.pending_request %}
+                                    <button class="btn btn-secondary disabled">Request Pending</button>
+                                {% else %}
+                                    <a href="{% url 'clothing_collections:make_collection_request' collection.id %}" class="btn btn-outline-warning">
+                                        Request Access
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'clothing_collections:collection_detail' collection.id %}" class="btn btn-primary">
+                                    View Collection
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No collections found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    </body>
+</html>
+{% endblock %}
