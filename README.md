@@ -110,7 +110,7 @@ This app is deployed to Heroku using a GitHub Actions workflow:
 
 ## Role & Contributions
 
-**My Role:** Full‑stack developer focusing on:
+**My Role:** Full‑stack developer and devops manager focusing on:
 
 * **Heroku Deployment & CI/CD**: Configured GitHub Actions for automated testing and Heroku releases.
 * **Collections & Permissions**: Built public/private collection features, access request flows, and UI cards.
